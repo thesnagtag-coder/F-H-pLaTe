@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Plate Plan</title>
+<style>
+:root{
+  --bg:#FBF8F3;--card:#FFFFFF;--ink:#2E2A26;--muted:#6F675F;--line:#ECE5DB;--soft:#F6F1EA;--chip:#F7F2EB;
+  --terra:#C2603A;--sage:#5F7F5A;--teal:#3E7A86;--vlc:#7A5A8C;--gold:#A57A2A;--shadow:0 6px 24px rgba(60,40,20,.07);
+  --veg:#E3ECDF;--pro:#F5DDD2;--bean:#D7E7EA;
+}
+:root[data-theme="dark"]{
+  --bg:#1E1C1A;--card:#2A2724;--ink:#F2ECE4;--muted:#B9AFA4;--line:#3D3833;--soft:#332F2B;--chip:#36312C;
+  --terra:#E08A63;--sage:#93B38C;--teal:#7FB6C1;--vlc:#B79AC8;--gold:#D2A95A;--shadow:none;
+  --veg:#33402F;--pro:#4A3328;--bean:#2B4045;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:700;margin:0}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 48px}
+header{padding:28px 0 14px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+header h1{font-size:30px;color:var(--terra);letter-spacing:.3px}
+header p{margin:4px 0 0;color:var(--muted)}
+.tbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:disabled{opacity:.45;cursor:default}
+.seg{display:flex;align-items:center;gap:4px}
+.seg span{color:var(--muted);font-size:13px;margin-right:2px}
+.seg button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 11px}
+.seg button.on{background:var(--terra);border-color:var(--terra);color:#fff}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);border:1px solid var(--line);margin:18px 0;padding:24px 26px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c,var(--terra))}
+.card h2{font-size:24px;color:var(--terra);margin-bottom:4px}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--c,var(--terra));margin-bottom:6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.plate{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center}
+.plate svg{width:100%;max-width:260px;display:block;margin:0 auto}
+.plate svg text{font-family:Georgia,serif;font-size:15px;font-weight:700;fill:var(--ink)}
+.leg{display:grid;gap:10px}
+.lg{background:var(--soft);border-radius:12px;padding:10px 14px;border-left:5px solid var(--c)}
+.lg .t{display:block;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--c)}
+.lg .s{font-size:13px;color:var(--muted);margin-top:4px}
+.fh{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
+.chip.f{border-color:var(--terra)}.chip.h{border-color:var(--teal)}
+.chip b{font-weight:700}
+.chip.f b{color:var(--terra)}.chip.h b{color:var(--teal)}
+.tip{margin-top:14px;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:14px}
+.tip b{display:block;color:var(--sage);font-size:12px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.who{background:var(--soft);border-radius:14px;padding:14px 16px}
+.who h3{font-size:18px;margin-bottom:6px}
+.who.f h3{color:var(--terra)}.who.h h3{color:var(--teal)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv span:last-child{font-weight:700;text-align:right}
+.who ul{margin:10px 0 0;padding-left:18px;font-size:14px}
+.who ul li{margin:4px 0}
+.meal{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.meal:last-child{border-bottom:0}
+.meal>b{font-family:Georgia,serif;color:var(--terra)}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px;align-items:center}
+.cat{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:14px}
+.cat.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.pbtn{margin-left:auto}
+.ch{margin:4px 0 2px;color:var(--muted);font-size:14px}
+.item{display:grid;grid-template-columns:38px 1fr;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.star{border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:50%;width:32px;height:32px;font-size:16px;line-height:1;padding:0}
+.iname{font-weight:700}
+.inote{color:var(--muted);font-size:13px}
+.am{margin-top:6px;display:grid;gap:6px}
+.row{font-size:14px}
+.badge{display:inline-block;min-width:22px;text-align:center;border-radius:6px;color:#fff;font-weight:700;font-size:12px;padding:1px 6px;margin-right:6px}
+.badge.f{background:var(--terra)}.badge.h{background:var(--teal)}.badge.fh{background:var(--sage)}
+.mac{display:block;color:var(--muted);font-size:13px;margin-top:1px}
+.skip{color:var(--muted);font-style:italic;font-size:14px}
+.daychips{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+.dc{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;font-size:14px}
+.dc.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dc.fast{border-style:dashed}
+.dt{display:flex;gap:6px;margin:6px 0 2px}
+.dt button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px}
+.dt button.on{background:var(--terra);border-color:var(--terra);color:#fff}
+.tot{display:grid;gap:8px;margin-top:12px}
+.trow{background:var(--soft);border-radius:12px;padding:10px 14px;font-size:14px}
+.trow .tt{color:var(--muted);font-size:13px}
+.mh{font-family:Georgia,serif;font-size:18px;color:var(--ink);margin:18px 0 8px}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 14px;margin:0 0 10px}
+.opt.on{border-color:var(--terra);background:var(--soft)}
+.oname{font-weight:700;display:flex;align-items:center;gap:8px}
+.radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex:none}
+.opt.on .radio{border-color:var(--terra);background:var(--terra);box-shadow:inset 0 0 0 3px var(--card)}
+.sk{color:var(--sage);font-size:13px;margin-top:2px}
+.snk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+.snk button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:13px}
+.snk button.on{background:var(--terra);border-color:var(--terra);color:#fff}
+.slabel{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
+.shop{list-style:none;margin:0;padding:0;columns:2;column-gap:28px}
+.shop li{break-inside:avoid;padding:5px 0 5px 28px;position:relative;cursor:pointer;border-bottom:1px dashed var(--line)}
+.shop li::before{content:"";position:absolute;left:0;top:8px;width:16px;height:16px;border:1.6px solid var(--c,var(--sage));border-radius:4px}
+.shop li.got{color:var(--muted);text-decoration:line-through}
+.shop li.got::before{background:var(--c,var(--sage))}
+.shop .q{color:var(--muted)}
+.pday{border-top:1px solid var(--line);padding:10px 0}
+.pday:first-of-type{border-top:0}
+.pday h3{font-size:17px;color:var(--terra);margin-bottom:4px}
+.pm{font-size:14px;margin:3px 0}
+.pm b{display:inline-block;min-width:78px}
+.ticks{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 10px;font-size:13px;color:var(--muted)}
+.tick{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px 5px 8px;font-size:13px}
+.tick .box{width:18px;height:18px;border:2px solid var(--c2,var(--sage));border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;line-height:1;color:#fff}
+.tick.on .box{background:var(--c2,var(--sage))}
+.tick.f{--c2:var(--terra)}.tick.h{--c2:var(--teal)}
+.stepper{display:inline-flex;align-items:center;gap:6px;margin-top:6px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;line-height:1;padding:0}
+.stepper button.plus{background:var(--terra);border-color:var(--terra);color:#fff}
+.stepper .v{min-width:64px;text-align:center;font-weight:700;font-size:14px}
+.inp{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}
+.pbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:3px 0 8px}
+.pbar i{display:block;height:100%;background:var(--c2,var(--sage))}
+.mrow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:14px}
+.btn.main{background:var(--terra);border-color:var(--terra);color:#fff}
+.check{font-size:13px;margin-top:6px}
+.check span{display:inline-block;margin-right:10px}
+.step{display:grid;grid-template-columns:40px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.num{width:34px;height:34px;border-radius:50%;background:var(--c,var(--terra));color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif}
+.step h3{font-size:17px;margin-bottom:2px}
+.step ul{margin:4px 0 0;padding-left:18px;font-size:14px}
+.step li{margin:2px 0}
+.go{margin-top:6px}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.foot{margin-top:30px;padding:18px 20px;border-radius:16px;background:var(--soft);font-size:13px;color:var(--muted)}
+.foot h3{font-size:15px;color:var(--ink);margin-bottom:6px}
+.foot ul{margin:6px 0;padding-left:18px}
+.foot li{margin:4px 0}
+@media (max-width:760px){
+  .shop{columns:1}
+  .plate,.two{grid-template-columns:1fr}
+  .meal{grid-template-columns:1fr;gap:2px}
+  .card{padding:20px 16px}.card h2{font-size:21px}
+  .pbtn{margin-left:0}
+}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;color:#000}
+  header,.bar,.cats,.star,.noprint{display:none!important}
+  .card{box-shadow:none;border:1px solid #ccc;margin:0 0 12px}
+  .item,.lg,.who,.meal,.opt{break-inside:avoid}
+  .daychips,.dt,.snk{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>Our Plate Plan</h1><p>High protein, high fibre, low carb - beans every day. Portions for F and H.</p></div>
+  <button class="tbtn" id="theme" aria-label="Toggle light or dark mode">Dark mode</button>
+</header>
+<div class="bar">
+  <div class="tabs" id="tabs"></div>
+  <div class="seg" id="day"></div>
+  <div class="seg" id="who"></div>
+</div>
+<main id="main"></main>
+<section class="foot">
+  <h3>How the numbers are worked out</h3>
+  <ul>
+    <li>Plate: based on the American Diabetes Association (ADA) Diabetes Plate Method for a 23 cm plate - half non-starchy vegetables, a quarter protein, a quarter carbohydrate foods (here, mostly beans).</li>
+    <li>Energy estimates use the Mifflin-St Jeor equation. F: 55, 1.70 m, 95 kg, sedentary (x1.2) = about 1,890 kcal to maintain, minus about 500 kcal = about 1,400 kcal. H: 56, 1.73 m, 78 kg, walks a lot (x1.375 to x1.55) = about 2,180-2,460 kcal to maintain, minus about 300-500 kcal = about 1,900-2,000 kcal. These are estimates - adjust by results.</li>
+    <li>Protein: 1.2-1.6 g per kg of body weight, a range widely used in weight-loss research to help protect muscle. F worked on goal weight (75 kg = 90-120 g), H on current weight (78 kg = 94-125 g).</li>
+    <li>Fibre: 30 g a day for adults (UK Scientific Advisory Committee on Nutrition, 2015).</li>
+    <li>Waist: keep waist to less than half your height (NICE guidance, 2022).</li>
+    <li>H's glucose: ADA target is under 10.0 mmol/L (180 mg/dL) 1-2 hours after starting a meal. His doctor may set a different target - follow theirs.</li>
+    <li>Eating order: food-order studies (e.g. Shukla et al., Diabetes Care, 2015) found that eating vegetables and protein before carbohydrates lowered the rise in glucose after meals.</li>
+    <li>Whey protein powder: values from the Optimum Nutrition Gold Standard 100% Whey (vanilla) tub label - 31 g scoop = 126 kcal, 24 g protein, 4 g carbs, 1.5 g fat.</li>
+    <li>Nutrition values: USDA FoodData Central (SR Legacy) per 100 g, cooked or drained weight unless stated. Estimates only - brands vary, so check labels.</li>
+    <li>Carbs are total carbohydrate including fibre. Net carbs = total carbs minus fibre. UK and EU labels usually list carbs without fibre already, so compare like with like.</li>
+    <li>Kitchen measures: 1 tsp = 5 ml, 1 tbsp = 15 ml.</li>
+    <li>Beans safety: dried red kidney beans must be soaked, then boiled hard for at least 10 minutes before simmering (NHS) - never cook them from dry in a slow cooker. Canned beans are already cooked.</li>
+    <li>Batch-cooked beans and leftovers: cool and refrigerate within 2 hours, keep at 5&deg;C or below and eat within 3-4 days, or freeze (USDA FSIS).</li>
+    <li>Share these portions with your doctor or dietitian, especially as H takes diabetes medication.</li>
+  </ul>
+</section>
+</div>
+<script>
+/* [name, kcal, protein g, carbs g (incl fibre), fibre g] per 100 g - USDA FoodData Central SR Legacy */
+const N={
+cbreast:["Chicken breast, skinless",165,31,0,0],
+cthigh:["Chicken thigh, skinless",209,26,0,0],
+mince:["Lean beef mince (90% lean)",217,26.1,0,0],
+wfish:["White fish (hake, cod)",105,22.8,0,0],
+salmon:["Salmon",206,22.1,0,0],
+tuna:["Tuna in water, drained",116,25.5,0,0],
+prawn:["Prawns (shrimp)",99,24,0.2,0],
+sard:["Sardines in oil, drained",208,24.6,0,0],
+egg:["Eggs, large",143,12.6,0.7,0],
+yog:["Greek yoghurt, plain, fat-free",59,10.2,3.6,0],
+hpy:["High-protein yoghurt or skyr, plain",59,10,3.6,0],
+labneh:["Labneh",null,null,null,null],
+whey:["Whey protein powder (ON Gold Standard)",405,77,13,0],
+lent:["Lentils",116,9,20.1,7.9],
+chick:["Chickpeas",164,8.9,27.4,7.6],
+black:["Black beans",132,8.9,23.7,8.7],
+kidney:["Red kidney beans",127,8.7,22.8,6.4],
+butter:["Butter beans",115,7.8,20.9,7],
+white:["Cannellini or white beans",139,9.7,25.1,6.3],
+split:["Split peas",118,8.3,21.1,8.3],
+edam:["Edamame, shelled",121,11.9,8.9,5.2],
+hum:["Hummus",166,7.9,14.3,6],
+quin:["Quinoa",120,4.4,21.3,2.8],
+brice:["Brown rice",123,2.7,25.6,1.6],
+sweet:["Sweet potato, baked in skin",90,2,20.7,3.3],
+oats:["Rolled oats (dry weight)",379,13.2,67.7,10.1],
+rasp:["Raspberries",52,1.2,11.9,6.5],
+straw:["Strawberries",32,0.7,7.7,2],
+blue:["Blueberries",57,0.7,14.5,2.4],
+apple:["Apple",52,0.3,13.8,2.4],
+broc:["Broccoli",34,2.8,6.6,2.6],
+caul:["Cauliflower",25,1.9,5,2],
+spin:["Spinach",23,2.9,3.6,2.2],
+courg:["Courgette (zucchini)",17,1.2,3.1,1],
+mush:["Mushrooms",22,3.1,3.3,1],
+pep:["Red bell pepper",31,1,6,2.1],
+gbean:["Green beans",31,1.8,7,2.7],
+cab:["Cabbage",25,1.3,5.8,2.5],
+tom:["Tomatoes",18,0.9,3.9,1.2],
+cuc:["Cucumber",15,0.7,3.6,0.5],
+aub:["Aubergine (eggplant)",25,1,5.9,3],
+asp:["Asparagus",20,2.2,3.9,2.1],
+leaf:["Salad leaves (lettuce)",15,1.4,2.9,1.3],
+oil:["Olive oil",884,0,0,0],
+avo:["Avocado",160,2,8.5,6.7],
+alm:["Almonds",579,21.2,21.6,12.5],
+wal:["Walnuts",654,15.2,13.7,6.7],
+pump:["Pumpkin seeds",559,30.2,10.7,6],
+feta:["Feta",264,14.2,4.1,0],
+ched:["Cheddar",403,24.9,1.3,0],
+olive:["Green olives",145,1,3.8,3.3],
+chia:["Chia seeds",486,16.5,42.1,34.4],
+flax:["Ground flaxseed",534,18.3,28.9,27.3]
+};
+/* items counted in units instead of grams */
+const U={whey:{w:31,s:"scoop",p:"scoops"},egg:{w:50,s:"large egg",p:"large eggs"},oil:{w:4.5,s:"tsp (5 ml)",p:"tsp (5 ml)"},chia:{w:12,s:"tbsp",p:"tbsp"},flax:{w:7,s:"tbsp",p:"tbsp"}};
+const CATS={
+pro:{n:"Proteins",c:"var(--terra)",d:"Pick 1 per meal. Cooked weight unless stated. Each portion gives about 30 g protein for F and 35 g for H."},
+bean:{n:"Beans & lentils",c:"var(--teal)",d:"At least 1 portion every day, at lunch or dinner. Cooked or drained weight. Fasting days: half portion, fill the gap with extra veg."},
+carb:{n:"Other carbs",c:"var(--gold)",d:"Normal days only. Use at the main meal that does not have beans. Skip on fasting days."},
+fruit:{n:"Fruit",c:"var(--vlc)",d:"1 portion a day, at breakfast or as part of a snack. Fasting days: berries only."},
+veg:{n:"Vegetables",c:"var(--sage)",d:"Fill half your plate. This is the minimum per main meal - more is fine. Mix and match to make up the weight."},
+fat:{n:"Healthy fats",c:"var(--gold)",d:"1 portion each. Breakfast: F 1, H 2. Lunch and dinner: F 2, H 3. Cooking oil counts."},
+fib:{n:"Fibre boosters",c:"var(--sage)",d:"1 a day on yoghurt, oats or in a smoothie. Drink a glass of water with it."},
+snk:{n:"Snacks",c:"var(--terra)",d:"F 1 a day, H 2 a day. H can add a third snack if he is hungry or losing weight from his arms and legs."}
+};
+const I=[
+{c:"pro",k:"cbreast",f:[100,100],h:[120,120]},
+{c:"pro",k:"cthigh",f:[110,110],h:[130,130]},
+{c:"pro",k:"mince",f:[110,110],h:[130,130],t:"Drain off the fat after browning."},
+{c:"pro",k:"wfish",f:[130,130],h:[150,150]},
+{c:"pro",k:"salmon",f:[120,120],h:[140,140],t:"Oily fish - aim for it once or twice a week."},
+{c:"pro",k:"tuna",f:[110,110],h:[130,130]},
+{c:"pro",k:"prawn",f:[120,120],h:[140,140]},
+{c:"pro",k:"sard",f:[110,110],h:[130,130],t:"Oily fish."},
+{c:"pro",k:"egg",f:[150,150],h:[200,200],t:"Breakfast. Lower in protein than the others - add a little high-protein yoghurt on the side if you like."},
+{c:"pro",k:"yog",f:[250,250],h:[300,300],t:"Breakfast. 175 g gives about 18 g protein, so the portion is bigger to reach your target."},
+{c:"pro",k:"hpy",f:[250,250],h:[300,300],t:"Use it in place of cottage cheese. Pick one with 10 g or more protein per 100 g on the label. Numbers shown are for 10 g - yours may be higher."},
+{c:"pro",id:"pro_whey",n:"Whey shake and yoghurt",p:[["whey",31,31,31,31],["yog",50,50,100,100]],t:"Breakfast. Mix the scoop with water (milk adds carbs), or stir it into the yoghurt with berries and chia. Values from your tub label."},
+{c:"bean",k:"lent",f:[80,40],h:[100,50],t:"Lowest net carbs of the dried beans and lentils."},
+{c:"bean",k:"chick",f:[80,40],h:[100,50]},
+{c:"bean",k:"black",f:[80,40],h:[100,50]},
+{c:"bean",k:"kidney",f:[80,40],h:[100,50],t:"Canned are ready to use. Dried: see the beans safety note at the bottom."},
+{c:"bean",k:"butter",f:[80,40],h:[100,50]},
+{c:"bean",k:"white",f:[80,40],h:[100,50]},
+{c:"bean",k:"split",f:[80,40],h:[100,50],t:"Good in soup."},
+{c:"bean",k:"edam",f:[100,100],h:[120,120],t:"Very low net carbs - the best bean for fasting days, full portion."},
+{c:"bean",k:"hum",f:[30,30],h:[40,40],t:"About 2 tbsp. A dip, not your daily beans - have a bean portion as well."},
+{c:"carb",k:"quin",f:[80,null],h:[100,null],t:"Cooked weight."},
+{c:"carb",k:"brice",f:[70,null],h:[90,null],t:"Cooked weight."},
+{c:"carb",k:"sweet",f:[80,null],h:[100,null]},
+{c:"carb",k:"oats",f:[30,null],h:[40,null],t:"Breakfast. Cook with water, top with yoghurt and berries."},
+{c:"fruit",k:"rasp",f:[100,80],h:[120,100],t:"Highest fibre fruit on this list."},
+{c:"fruit",k:"straw",f:[120,80],h:[150,100]},
+{c:"fruit",k:"blue",f:[80,null],h:[100,null]},
+{c:"fruit",k:"apple",f:[100,null],h:[130,null],t:"About 1 small apple."},
+...["broc","caul","spin","courg","mush","pep","gbean","cab","tom","cuc","aub","asp","leaf"].map(k=>({c:"veg",k,f:[150,150],h:[200,200],min:true})),
+{c:"fat",k:"oil",f:[4.5,4.5],h:[4.5,4.5]},
+{c:"fat",k:"avo",f:[30,30],h:[30,30]},
+{c:"fat",k:"alm",f:[10,10],h:[10,10],t:"About 8 almonds."},
+{c:"fat",k:"wal",f:[10,10],h:[10,10]},
+{c:"fat",k:"pump",f:[10,10],h:[10,10]},
+{c:"fat",k:"feta",f:[15,15],h:[15,15]},
+{c:"fat",k:"ched",f:[15,15],h:[15,15]},
+{c:"fat",k:"olive",f:[30,30],h:[30,30]},
+{c:"fat",k:"labneh",f:[30,30],h:[30,30],t:"About 2 tbsp = 1 fat portion. Brands vary a lot - check your label. Light labneh has less fat."},
+{c:"fib",k:"chia",f:[12,12],h:[12,12]},
+{c:"fib",k:"flax",f:[7,7],h:[7,7]},
+{c:"snk",id:"s1",n:"Almonds",p:[["alm",20,20,30,30]]},
+{c:"snk",id:"s2",n:"Boiled eggs and cucumber",p:[["egg",100,100,100,100],["cuc",100,100,150,150]]},
+{c:"snk",id:"s3",n:"Hummus and pepper sticks",p:[["hum",40,40,60,60],["pep",100,100,150,150]]},
+{c:"snk",id:"s4",n:"Edamame",p:[["edam",100,100,150,150]],t:"Steam from frozen, add a pinch of salt."},
+{c:"snk",id:"s5",n:"Yoghurt and raspberries",p:[["yog",150,150,200,200],["rasp",50,50,80,80]]},
+{c:"snk",id:"s7",n:"Protein shake",p:[["whey",31,31,31,31]],t:"1 scoop with 180-240 ml cold water. Values from your tub label."},
+{c:"snk",id:"s6",n:"Cheddar and cucumber",p:[["ched",20,20,30,30],["cuc",100,100,150,150]]}
+].map(x=>x.p?x:{...x,id:x.c+"_"+x.k,n:N[x.k][0],p:[[x.k,x.f[0],x.f[1],x.h[0],x.h[1]]]});
+
+const LS={get(k,d){try{const v=localStorage.getItem("opp_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("opp_"+k,JSON.stringify(v))}catch(e){}}};
+let st={tab:LS.get("tab","plate"),day:LS.get("day","normal"),who:LS.get("who","both"),cat:LS.get("cat","pro"),fav:LS.get("fav",[]),pday:LS.get("pday",0),dtype:LS.get("dtype",Array(7).fill("normal")),sel:LS.get("sel",{}),got:LS.get("got",[]),ate:LS.get("ate",{}),my:LS.get("my",[]),bd:LS.get("bd",{n:"",slot:"l",items:{},edit:null,cat:"pro"}),log:LS.get("log",{}),td:new Date().toLocaleDateString("en-CA"),tw:LS.get("tw","f"),tslot:"b",tcat:"pro"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function frac(v){const w=Math.floor(v+1e-9),r=v-w;const F=[[0,""],[.25,"1/4"],[.5,"1/2"],[.75,"3/4"],[1,""]];let b=F[0];for(const f of F)if(Math.abs(r-f[0])<Math.abs(r-b[0]))b=f;const W=w+(b[0]===1?1:0);return (W?W:"")+(W&&b[1]?" ":"")+b[1]}
+function oz(g){const h=Math.max(.5,Math.round(g/28.3495*2)/2);return frac(h)+" oz"}
+function amt(k,g){if(U[k]){const n=Math.round(g/U[k].w*10)/10;return k==="oil"?`${n} tsp (${n*5} ml)`:`${n} ${n===1?U[k].s:U[k].p} (${g} g)`}return `${g} g`}
+function rd(x){return x<10?Math.round(x*10)/10:Math.round(x)}
+/* idx: F normal=1, F fast=2, H normal=3, H fast=4 */
+function calc(it,who,day){day=day||st.day;const i=1+(who==="h"?2:0)+(day==="fast"?1:0);let kc=0,P=0,C=0,Fb=0,nd=false;const txt=[],sk=[];
+  for(const p of it.p){const g=p[i];if(g==null){if(it.meal){sk.push(N[p[0]][0].split(",")[0].split(" (")[0]);continue}return null}const d=N[p[0]];if(d[1]==null)nd=true;kc+=d[1]*g/100;P+=d[2]*g/100;C+=d[3]*g/100;Fb+=d[4]*g/100;
+    txt.push((it.p.length>1&&(!U[p[0]]||p[0]==="oil"||p[0]==="whey")?(p[0]==="whey"?"Whey ":d[0].split(",")[0]+" "):"")+amt(p[0],g))}
+  return {txt:(it.min?"At least ":"")+txt.join(" + "),kc,P,C,Fb,nd,sk}}
+function macro(r){if(r.nd)return "Check your label for protein, carbs and kcal";return `Protein ${rd(r.P)} g · Carbs ${rd(r.C)} g · Fibre ${rd(r.Fb)} g · Net carbs ${rd(Math.max(0,r.C-r.Fb))} g · ${Math.round(r.kc)} kcal`}
+function rowHTML(it){
+  const f=calc(it,"f"),h=calc(it,"h");
+  if(st.who!=="h"&&st.who!=="f"&&f&&h&&f.txt===h.txt)return `<div class="row"><span class="badge fh">F+H</span>${esc(f.txt)}<span class="mac">${macro(f)}</span></div>`;
+  return (st.who==="both"?["f","h"]:[st.who]).map(w=>{const r=w==="f"?f:h;
+    return r?`<div class="row"><span class="badge ${w}">${w.toUpperCase()}</span>${esc(r.txt)}<span class="mac">${macro(r)}</span></div>`
+            :`<div class="row skip"><span class="badge ${w}">${w.toUpperCase()}</span>Skip on fasting days</div>`}).join("")}
+function chip(w,t){return `<span class="chip ${w}"><b>${w.toUpperCase()}</b> ${t}</span>`}
+function pair(f,h){return (st.who!=="h"?chip("f",f):"")+(st.who!=="f"?chip("h",h):"")}
+
+function plateView(){
+  const fast=st.day==="fast";
+  const svg=`<svg viewBox="0 0 260 260" role="img" aria-label="Plate: half vegetables, quarter protein, quarter beans">
+  <circle cx="130" cy="130" r="127" fill="var(--card)" stroke="var(--line)" stroke-width="3"/>
+  <path d="M130 130 L130 12 A118 118 0 0 0 130 248 Z" fill="var(--veg)" stroke="var(--card)" stroke-width="6"/>
+  <path d="M130 130 L130 12 A118 118 0 0 1 248 130 Z" fill="var(--pro)" stroke="var(--card)" stroke-width="6"/>
+  <path d="M130 130 L248 130 A118 118 0 0 1 130 248 Z" fill="var(--bean)" stroke="var(--card)" stroke-width="6"/>
+  <text x="72" y="128" text-anchor="middle">Veg</text><text x="72" y="148" text-anchor="middle" style="font-size:12px;font-weight:400">half</text>
+  <text x="180" y="88" text-anchor="middle">Protein</text>
+  <text x="180" y="180" text-anchor="middle">${fast?"Beans +":"Beans"}</text>${fast?`<text x="180" y="198" text-anchor="middle" style="font-size:12px;font-weight:400">extra veg</text>`:""}
+  </svg>`;
+  const legend=`<div class="leg">
+   <div class="lg" style="--c:var(--sage)"><span class="t">Half the plate - vegetables</span><div class="fh">${pair("at least 150 g","at least 200 g")}</div><div class="s">Non-starchy veg from the Vegetables list. Eat these first.</div></div>
+   <div class="lg" style="--c:var(--terra)"><span class="t">A quarter - protein</span><div class="fh">${pair("about 30 g protein, e.g. 100 g chicken breast","about 35 g protein, e.g. 120 g chicken breast")}</div><div class="s">Any 1 from the Proteins list.</div></div>
+   <div class="lg" style="--c:var(--teal)"><span class="t">A quarter - ${fast?"half portion of beans + extra veg":"beans"}</span><div class="fh">${fast?pair("40 g","50 g"):pair("80 g","100 g")}</div><div class="s">${fast?"Or a full portion of edamame. No other carbs today.":"Beans at least once a day. At the other main meal you can swap in 1 portion from Other carbs."}</div></div>
+   <div class="lg" style="--c:var(--gold)"><span class="t">Fats on the plate</span><div class="fh">${pair("2 portions","3 portions")}</div><div class="s">e.g. 1 tsp (5 ml) olive oil + 30 g avocado. Cooking oil counts.</div></div>
+  </div>`;
+  const meals=fast?[
+    ["Meal 1","Plate: half veg, 1 protein, half portion of beans (or full edamame), fats."],
+    ["Meal 2","Plate: same again, a different protein and veg."],
+    ["Fruit","Berries only - raspberries or strawberries. No other carbs today."],
+    ["Snacks","F: none, or 1 if hungry. H: as normal."],
+    ["H","H can keep his normal 3 meals and snacks on your fasting days - his CGM shows how he responds."],
+    ["Target","20 g net carbs or less per meal."]
+  ]:[
+    ["Breakfast","1 breakfast protein (yoghurt, skyr, eggs or a whey shake) + 1 fruit + 1 fibre booster + fats (F 1, H 2)."],
+    ["Lunch","Plate: half veg, 1 protein, 1 beans, fats (F 2, H 3)."],
+    ["Dinner","Plate: half veg, 1 protein, 1 beans or 1 other carb, fats (F 2, H 3)."],
+    ["Snacks","F 1, H 2."],
+    ["Every day","Beans at least once, 30 g fibre, plenty of water."]
+  ];
+  return `<article class="card" style="--c:var(--sage)"><span class="tag">${fast?"Fasting day - very low carb":"Normal day - low carb"}</span><h2>Your 23 cm plate</h2><p class="lead">Same plate for both of you - only the portion sizes change.</p>
+   <div class="plate">${svg}${legend}</div>
+   <div class="tip"><b>Eating order</b>Veg first, then protein and fats, beans or carbs last. It helps soften the rise in blood glucose after meals.</div></article>
+  <article class="card" style="--c:var(--terra)"><span class="tag">Pick one from each list</span><h2>Meal formulas</h2><p class="lead">${fast?"2-meal day for F. Switch to Normal day at the top for the 3-meal formula.":"Build every meal from the Food lists. Switch to Fasting day at the top for your very low carb days."}</p>
+   ${meals.map(m=>`<div class="meal"><b>${m[0]}</b><div>${m[1]}</div></div>`).join("")}</article>
+  <article class="card" style="--c:var(--teal)"><span class="tag">Daily targets</span><h2>F and H at a glance</h2><p class="lead">Estimates to plan with - adjust by how your waist and weight respond.</p>
+   <div class="two">
+    ${st.who!=="h"?`<div class="who f"><h3>F - lose 20 kg overall</h3>
+     <div class="kv"><span>Energy</span><span>about 1,400 kcal</span></div>
+     <div class="kv"><span>Protein</span><span>about 100 g</span></div>
+     <div class="kv"><span>Fibre</span><span>30 g or more</span></div>
+     <div class="kv"><span>Net carbs per main meal</span><span>${fast?"20 g or less":"about 15-25 g"}</span></div>
+     <div class="kv"><span>Waist goal</span><span>under 85 cm</span></div></div>`:""}
+    ${st.who!=="f"?`<div class="who h"><h3>H - belly (visceral) fat</h3>
+     <div class="kv"><span>Energy</span><span>about 1,900-2,000 kcal</span></div>
+     <div class="kv"><span>Protein</span><span>about 110 g</span></div>
+     <div class="kv"><span>Fibre</span><span>30 g or more</span></div>
+     <div class="kv"><span>Net carbs per main meal</span><span>${fast?"20 g or less":"about 20-30 g"}</span></div>
+     <div class="kv"><span>After-meal glucose (ADA)</span><span>under 10.0 mmol/L (180 mg/dL) at 1-2 h</span></div>
+     <div class="kv"><span>Waist goal</span><span>under 86.5 cm</span></div>
+     <ul><li>His waist is the number to watch, not the scale.</li>
+     <li>No food burns belly fat directly - a small daily deficit, his walking and fewer sugary drinks and alcohol do the work.</li>
+     <li>Strength work on 2 or more days a week (WHO) helps keep muscle on his arms and legs.</li>
+     <li>If he loses weight elsewhere or feels hungry, add protein or fats first - they barely move his glucose.</li>
+     <li>His CGM shows which carb portions suit him - adjust his beans portion up or down by what it shows.</li></ul></div>`:""}
+   </div></article>`;
+}
+function listsView(){
+  const order=["pro","bean","carb","fruit","veg","fat","fib","snk"];
+  const chips=`<div class="cats">${order.map(k=>`<button class="cat ${st.cat===k?"on":""}" data-cat="${k}"><span class="dot" style="background:${CATS[k].c}"></span>${CATS[k].n}</button>`).join("")}<button class="cat ${st.cat==="fav"?"on":""}" data-cat="fav">&#9733; Our picks</button><button class="tbtn pbtn noprint" id="print">Save as PDF</button></div>`;
+  const cats=st.cat==="fav"?order:[st.cat];
+  let body="";
+  for(const k of cats){const L=I.filter(x=>x.c===k&&(st.cat!=="fav"||st.fav.includes(x.id)));if(!L.length)continue;
+    body+=`<article class="card" style="--c:${CATS[k].c}"><span class="tag">${st.day==="fast"?"Fasting day portions":"Normal day portions"}</span><h2>${CATS[k].n}</h2><p class="ch">${CATS[k].d}</p>
+    ${L.map(it=>`<div class="item"><button class="star" data-fav="${it.id}" aria-label="Add to our picks">${st.fav.includes(it.id)?"&#9733;":"&#9734;"}</button><div><div class="iname">${esc(it.n)}</div>${it.t?`<div class="inote">${esc(it.t)}</div>`:""}<div class="am">${rowHTML(it)}</div></div></div>`).join("")}</article>`}
+  if(!body)body=`<div class="empty">No picks yet. Tap the star next to any food to keep your favourites here.</div>`;
+  return chips+body;
+}
+/* ---------- 7-day plan: meal pools [key, F normal, F fasting, H normal, H fasting] ---------- */
+const X=(k,f,h)=>[k,f,f,h,h],B=k=>[k,80,40,100,50],C=(k,f,h)=>[k,f,null,h,null],ED=["edam",100,100,120,120],RA=["rasp",100,80,120,100],SB=["straw",120,80,150,100];
+const MB=[
+{id:"b1",n:"Berry yoghurt bowl",t:"Top the yoghurt with raspberries, chia and chopped almonds.",p:[X("yog",250,300),RA,X("chia",12,12),X("alm",10,20)]},
+{id:"b2",n:"Tomato & spinach eggs",t:"Scramble or fry in the oil with the spinach and tomato. Strawberries after.",p:[X("egg",150,200),X("spin",50,50),X("tom",100,100),X("oil",4.5,9),SB]},
+{id:"b3",n:"Vanilla whey yoghurt bowl",t:"Stir the scoop into the yoghurt with a splash of water. Top with raspberries, chia and walnuts.",p:[X("whey",31,31),X("yog",50,100),RA,X("chia",12,12),X("wal",10,20)]},
+{id:"b4",n:"Protein oats",no:1,t:"Cook the oats in water, stir in the whey after cooking, top with blueberries and chia. Normal days only.",p:[C("oats",30,40),X("whey",31,31),C("blue",80,100),X("chia",12,12)]},
+{id:"b5",n:"Skyr & strawberries",t:"Sprinkle the flax and pumpkin seeds on top.",p:[X("hpy",250,300),SB,X("flax",7,7),X("pump",10,20)]},
+{id:"b6",n:"Egg & avocado plate",t:"Boiled or fried eggs with sliced avocado, tomato and cucumber. Raspberries after.",p:[X("egg",150,200),X("avo",30,60),X("tom",100,100),X("cuc",100,100),RA]}
+];
+const ML=[
+{id:"l1",n:"Chicken & chickpea bowl",t:"Cucumber, tomato and feta with a lemon and olive oil dressing.",p:[X("cbreast",100,120),B("chick"),X("cuc",75,100),X("tom",75,100),X("oil",4.5,9),X("feta",15,15)]},
+{id:"l2",n:"Tuna & white bean salad",t:"Toss everything with the oil, lemon juice and black pepper.",p:[X("tuna",110,130),B("white"),X("leaf",75,100),X("pep",75,100),X("oil",9,13.5)]},
+{id:"l3",n:"Prawn & black bean bowl",t:"Shredded cabbage, peppers, avocado and a squeeze of lime.",p:[X("prawn",120,140),B("black"),X("cab",75,100),X("pep",75,100),X("avo",30,30),X("oil",4.5,9)]},
+{id:"l4",n:"Warm chicken thigh & lentil salad",t:"The spinach wilts under the warm lentils. Crumble the feta on top.",p:[X("cthigh",110,130),B("lent"),X("spin",75,100),X("tom",75,100),X("oil",4.5,9),X("feta",15,15)]},
+{id:"l5",n:"Salmon & edamame bowl",t:"Steamed broccoli and cucumber with lemon or a little reduced-salt soy sauce.",p:[X("salmon",120,140),ED,X("broc",75,100),X("cuc",75,100),X("oil",4.5,9)]},
+{id:"l6",n:"Sardine & butter bean plate",t:"Salad leaves and tomato, with the sardines and beans on top.",p:[X("sard",110,130),B("butter"),X("leaf",75,100),X("tom",75,100),X("oil",4.5,9)]},
+{id:"l7",n:"Beef & kidney bean chilli bowl",t:"Brown the mince, drain the fat, add peppers, tomato, cumin and chilli. Avocado on top.",p:[X("mince",110,130),B("kidney"),X("pep",75,100),X("tom",75,100),X("oil",4.5,9),X("avo",30,30)]}
+];
+const MD=[
+{id:"d1",n:"Lemon fish, broccoli & quinoa",t:"Bake or air-fry the fish, steam the broccoli, finish with lemon.",p:[X("wfish",130,150),C("quin",80,100),X("broc",150,200),X("oil",9,13.5)]},
+{id:"d2",n:"Chicken, roast veg & sweet potato",t:"Roast the courgette and peppers with the oil. Sweet potato baked in its skin.",p:[X("cbreast",100,120),C("sweet",80,100),X("courg",75,100),X("pep",75,100),X("oil",9,13.5)]},
+{id:"d3",n:"Salmon, asparagus & lentils",t:"Lentils warmed with garlic and lemon, asparagus grilled.",p:[X("salmon",120,140),B("lent"),X("asp",150,200),X("oil",4.5,9)]},
+{id:"d4",n:"Beef mince, cauliflower & brown rice",t:"Mince browned with garlic and spices. Roasted cauliflower and green beans.",p:[X("mince",110,130),C("brice",70,90),X("caul",75,100),X("gbean",75,100),X("oil",4.5,9)]},
+{id:"d5",n:"Prawn & edamame stir-fry",t:"Stir-fry cabbage and peppers in the oil with ginger and garlic, add prawns and edamame.",p:[X("prawn",120,140),ED,X("cab",75,100),X("pep",75,100),X("oil",9,13.5)]},
+{id:"d6",n:"Chicken thigh, aubergine & chickpeas",t:"Roast the aubergine, then simmer with tomato, chickpeas and cumin.",p:[X("cthigh",110,130),B("chick"),X("aub",75,100),X("tom",75,100),X("oil",4.5,9)]},
+{id:"d7",n:"White fish, mushrooms & white bean mash",t:"Mash the warm beans with garlic and a little of the oil. Pan-fry the mushrooms.",p:[X("wfish",130,150),B("white"),X("mush",75,100),X("gbean",75,100),X("oil",9,13.5)]}
+].map(x=>({...x,meal:1}));
+MB.forEach(x=>x.meal=1);ML.forEach(x=>x.meal=1);
+const POOL={b:MB,l:ML,d:MD},MNAME={b:"Breakfast",l:"Lunch",d:"Dinner"};
+const SNK0=I.filter(x=>x.c==="snk");let SNK=SNK0;
+function dayOpts(d,m){const P=POOL[m];let o=[0,2,4].map(k=>P[(d+k)%P.length]);if(st.dtype[d]==="fast")o=o.filter(x=>!x.no);return o.concat(myMeals(m))}
+function picked(d,m){const o=dayOpts(d,m),s=(st.sel[d]||{})[m];return o.find(x=>x.id===s)||o[0]}
+function pickedSnack(d,k,def){const s=(st.sel[d]||{})[k];return SNK.find(x=>x.id===s)||SNK.find(x=>x.id===def)}
+function dayTotal(d,who){const day=st.dtype[d],fast=day==="fast";let t={kc:0,P:0,C:0,Fb:0};
+  const add=it=>{const r=calc(it,who,day);if(r){t.kc+=r.kc;t.P+=r.P;t.C+=r.C;t.Fb+=r.Fb}};
+  if(!(fast&&who==="f"))add(picked(d,"b"));add(picked(d,"l"));add(picked(d,"d"));
+  if(!(fast&&who==="f"))add(pickedSnack(d,"s1","s1"));if(who==="h")add(pickedSnack(d,"s2","s4"));return t}
+function totRow(w,d){const t=dayTotal(d,w),fast=st.dtype[d]==="fast";
+  const tg=w==="f"?"Target: about 1,400 kcal, 100 g protein, 30 g+ fibre":"Target: about 1,900-2,000 kcal, 110 g protein, 30 g+ fibre";
+  return `<div class="trow"><span class="badge ${w}">${w.toUpperCase()}</span><b>${Math.round(t.kc).toLocaleString("en")} kcal</b> · Protein ${Math.round(t.P)} g · Fibre ${Math.round(t.Fb)} g · Net carbs ${Math.round(t.C-t.Fb)} g<span class="mac">${tg}${w==="f"&&fast?". Fasting day - lower energy is expected.":""}. Not counted: onion, garlic, herbs, sauces and drinks.</span>${t.Fb<30&&!(w==="f"&&fast)?`<div class="sk">Fibre under 30 g - add 1 tbsp chia (about 4 g fibre) or more veg.</div>`:""}${w==="h"&&t.kc<1800?`<div class="sk">Under H's target - add a third snack or 1 more fat portion.</div>`:""}</div>`}
+function optRows(it,d,m){const day=st.dtype[d],fast=day==="fast";
+  return (st.who==="both"?["f","h"]:[st.who]).map(w=>{
+    if(fast&&w==="f"&&m==="b")return `<div class="row skip"><span class="badge f">F</span>Fasting window - no breakfast</div>`;
+    const r=calc(it,w,day);return `<div class="row"><span class="badge ${w}">${w.toUpperCase()}</span>${esc(r.txt)}<span class="mac">${macro(r)}</span>${r.sk.length?`<div class="sk">Fasting day: leave out the ${esc(r.sk.join(" and ").toLowerCase())} - add extra veg instead.</div>`:""}</div>`}).join("")}
+function snackHTML(d,key,def,label,who){const cur=pickedSnack(d,key,def),day=st.dtype[d];
+  const r=calc(cur,who,day);
+  return `<div class="slabel">${label}</div><div class="snk">${SNK.map(x=>`<button class="${x.id===cur.id?"on":""}" data-pick="${d}|${key}|${x.id}">${esc(x.n)}</button>`).join("")}</div>
+  <div class="row"><span class="badge ${who}">${who.toUpperCase()}</span>${esc(r.txt)}<span class="mac">${macro(r)}</span></div>`}
+function planView(){const d=st.pday,fast=st.dtype[d]==="fast";
+  const chips=`<div class="daychips">${[0,1,2,3,4,5,6].map(i=>`<button class="dc ${i===d?"on":""} ${st.dtype[i]==="fast"?"fast":""}" data-pday="${i}">Day ${i+1}${st.dtype[i]==="fast"?" · fast":""}${(()=>{const c=dayTicks(i);return c[0]?` · ${c[0]}/${c[1]} &#10003;`:""})()}</button>`).join("")}</div>`;
+  let h=`<article class="card" style="--c:var(--terra)"><span class="tag">${fast?"Fasting day - very low carb":"Normal day - low carb"}</span><h2>Day ${d+1}</h2>
+   <p class="lead">Tap one option per meal, then tick it off once eaten. Everything is saved. Change the day type here - fasting days use the very low carb portions.</p>
+   <div class="dt"><button class="${!fast?"on":""}" data-dtype="normal">Normal day</button><button class="${fast?"on":""}" data-dtype="fast">Fasting day</button></div>
+   <div class="tot">${st.who!=="h"?totRow("f",d):""}${st.who!=="f"?totRow("h",d):""}</div>${(()=>{const c=dayTicks(d);return `<div class="ticks" style="margin-top:10px">Eaten today: ${c[0]} of ${c[1]} ${c[0]?`<button class="tick" data-clearate="${d}">Clear ticks</button>`:""}</div>`})()}</article>`;
+  for(const m of ["b","l","d"]){const cur=picked(d,m);
+    h+=`<article class="card" style="--c:${m==="b"?"var(--vlc)":m==="l"?"var(--teal)":"var(--sage)"}"><h2>${MNAME[m]}</h2>${tickRow(d,m)}${m==="l"?`<p class="ch">Every lunch has beans - that covers your beans for the day.</p>`:m==="b"&&fast?`<p class="ch">F is fasting this morning. H eats as normal.</p>`:""}
+    ${dayOpts(d,m).map(o=>`<button class="opt ${o.id===cur.id?"on":""}" data-pick="${d}|${m}|${o.id}"><div class="oname"><span class="radio"></span>${esc(o.n)}${o.own?` <span class="chip" style="font-weight:400">My meal</span>`:""}</div><div class="inote">${esc(o.t)}</div><div class="am">${optRows(o,d,m)}</div></button>`).join("")}</article>`}
+  h+=`<article class="card" style="--c:var(--gold)"><h2>Snacks</h2><p class="ch">${fast?"F: only if hungry - not counted in F's total today. ":""}H has 2 snacks a day.</p>${tickRow(d,"s1","Snack 1 eaten")}${st.who!=="f"?tickRow(d,"s2","Snack 2 eaten"):""}
+   ${st.who!=="h"&&!fast?snackHTML(d,"s1","s1","Snack - F and H","f"):""}
+   ${st.who!=="f"?snackHTML(d,"s1","s1",fast||st.who==="h"?"Snack 1 - H":"Snack 1 - H (same as F)","h"):""}
+   ${st.who!=="f"?snackHTML(d,"s2","s4","Snack 2 - H only","h"):""}</article>`;
+  return chips+h}
+/* ---------- eaten ticks: key "day|meal|who" ---------- */
+function tickWho(d,m){const fast=st.dtype[d]==="fast";return (st.who==="both"?["f","h"]:[st.who]).filter(w=>!(w==="f"&&(m==="s2"||(fast&&(m==="b"||m==="s1")))))}
+function tickRow(d,m,label){const ws=tickWho(d,m);if(!ws.length)return "";
+  return `<div class="ticks">${label||"Eaten"}: ${ws.map(w=>{const k=`${d}|${m}|${w}`,on=!!st.ate[k];return `<button class="tick ${w} ${on?"on":""}" data-ate="${k}" aria-pressed="${on}"><span class="box">${on?"&#10003;":""}</span>${w.toUpperCase()}</button>`}).join("")}</div>`}
+function dayTicks(d){let n=0,t=0;for(const m of ["b","l","d","s1","s2"])for(const w of tickWho(d,m)){t++;if(st.ate[`${d}|${m}|${w}`])n++}return [n,t]}
+/* ---------- Week & shop ---------- */
+const KCAT={whey:"pro"};I.forEach(x=>{if(x.k)KCAT[x.k]=x.c});
+const SHOPCAT=[["pro","Proteins"],["bean","Beans & lentils"],["carb","Other carbs"],["fruit","Fruit"],["veg","Vegetables"],["fat","Healthy fats"],["fib","Fibre boosters"]];
+function weekShop(){const agg={};
+  const add=(it,who,day)=>{const i=1+(who==="h"?2:0)+(day==="fast"?1:0);for(const p of it.p){const g=p[i];if(g==null)continue;agg[p[0]]=(agg[p[0]]||0)+g}};
+  for(let d=0;d<7;d++){const day=st.dtype[d],fast=day==="fast";
+    for(const w of ["f","h"]){if(!(fast&&w==="f"))add(picked(d,"b"),w,day);add(picked(d,"l"),w,day);add(picked(d,"d"),w,day);
+      if(!(fast&&w==="f"))add(pickedSnack(d,"s1","s1"),w,day);if(w==="h")add(pickedSnack(d,"s2","s4"),w,day)}}
+  return agg}
+function shopAmt(k,g){if(k==="egg")return `${Math.ceil(g/50)} large eggs`;if(k==="whey")return `${Math.round(g/31)} scoops (${g} g)`;
+  if(k==="oil")return `${Math.round(g/4.5*5)} ml`;if(k==="chia"||k==="flax")return `${Math.round(g/U[k].w)} tbsp (${g} g)`;
+  return g>=1000?`${(g/1000).toFixed(2).replace(/\.?0+$/,"")} kg`:`${Math.round(g)} g`}
+function printView(){
+  let days="";
+  for(let d=0;d<7;d++){const day=st.dtype[d],fast=day==="fast";
+    const line=(lab,it,m)=>{const parts=(st.who==="both"?["f","h"]:[st.who]).map(w=>{if(fast&&w==="f"&&(m==="b"||m==="s1"))return `<span class="badge f">F</span>${m==="b"?"fasting":"only if hungry"}`;if(m==="s2"&&w==="f")return "";const r=calc(it,w,day);return `<span class="badge ${w}">${w.toUpperCase()}</span>${esc(r.txt)}`}).filter(Boolean).join(" &nbsp; ");
+      return `<div class="pm"><b>${lab}</b> ${esc(it.n)}<div class="inote">${parts}</div>${tickRow(d,m,"Eaten")}</div>`};
+    const tf=dayTotal(d,"f"),th=dayTotal(d,"h");
+    days+=`<div class="pday"><h3>Day ${d+1} - ${fast?"Fasting day":"Normal day"}</h3>
+      ${line("Breakfast",picked(d,"b"),"b")}${line("Lunch",picked(d,"l"),"l")}${line("Dinner",picked(d,"d"),"d")}
+      ${line("Snack",pickedSnack(d,"s1","s1"),"s1")}${st.who!=="f"?line("Snack 2",pickedSnack(d,"s2","s4"),"s2"):""}
+      <div class="inote">${st.who!=="h"?`F: ${Math.round(tf.kc).toLocaleString("en")} kcal, ${Math.round(tf.P)} g protein, ${Math.round(tf.Fb)} g fibre. `:""}${st.who!=="f"?`H: ${Math.round(th.kc).toLocaleString("en")} kcal, ${Math.round(th.P)} g protein, ${Math.round(th.Fb)} g fibre.`:""}</div></div>`}
+  const agg=weekShop();let shop="";
+  for(const [c,n] of SHOPCAT){const ks=Object.keys(agg).filter(k=>KCAT[k]===c).sort((a,b)=>N[a][0].localeCompare(N[b][0]));if(!ks.length)continue;
+    shop+=`<div class="slabel" style="margin-top:12px">${n}</div><ul class="shop" style="--c:${CATS[c].c}">${ks.map(k=>`<li class="${st.got.includes(k)?"got":""}" data-shop="${k}">${esc(N[k][0])} <span class="q">- ${shopAmt(k,agg[k])}</span></li>`).join("")}</ul>`}
+  return `<div class="cats noprint"><button class="tbtn" id="print">Save as PDF</button><button class="tbtn" data-clearshop="">Untick shopping list</button></div>
+  <article class="card" style="--c:var(--terra)"><span class="tag">Your 7 days</span><h2>Week at a glance</h2><p class="lead">Built from your picks in the 7-day plan tab. Tick meals off as you eat them - the ticks match the 7-day plan.</p>${days}</article>
+  <article class="card" style="--c:var(--sage)"><span class="tag">For F and H together</span><h2>Shopping list</h2><p class="lead">Totals for the whole week, both of you. Tap to tick off while you shop.</p>
+  <div class="inote">Weights are as eaten: cooked meat, fish, rice and quinoa, drained beans. Meat and fish lose weight when cooked, so buy a little more raw. Not listed: onion, garlic, lemon, herbs, spices and sauces.</div>${shop}</article>`}
+/* ---------- My meals (builder) ---------- */
+const SLOTS=[["b","Breakfast"],["l","Lunch"],["d","Dinner"],["s","Snack"]];
+const byId=id=>I.find(x=>x.id===id);
+function scaleIt(it,m){return {...it,p:it.p.map(p=>[p[0],...p.slice(1).map(g=>g==null?null:Math.round(g*m*10)/10)])}}
+function compose(m){const parts=[];const names=[];for(const [id,mult] of m.items){const it=byId(id);if(!it)continue;names.push((mult!==1?mult+" x ":"")+it.n);for(const p of scaleIt(it,mult).p)parts.push(p)}
+  return {id:"my_"+m.id,n:m.n,t:"My meal: "+names.join(", "),p:parts,meal:1,own:1,c:m.slot==="s"?"snk":"my"}}
+function myMeals(slot){return st.my.filter(m=>m.slot===slot).map(compose)}
+function plateCheck(items){const c={pro:0,bean:0,carb:0,veg:0,fat:0};for(const id in items){const it=byId(id);if(it&&c[it.c]!==undefined)c[it.c]+=items[id]}
+  const ok=(v,t)=>`<span>${v?"&#10003;":"&#9675;"} ${t}</span>`;return `<div class="check">${ok(c.pro,"protein")}${ok(c.bean||c.carb,"beans or carb")}${ok(c.veg,"veg")}${ok(c.fat,"fats ("+c.fat+")")}</div>`}
+function portionTxt(it){const f=calc(it,"f","normal"),h=calc(it,"h","normal");return f&&h?(f.txt===h.txt?`1 portion: ${esc(f.txt)}`:`1 portion: F ${esc(f.txt)} · H ${esc(h.txt)}`):""}
+function stepper(attr,id,v){return `<div class="stepper"><button data-${attr}="${id}|-0.5" aria-label="Less">&minus;</button><span class="v">${v?v+(v===1?" portion":" portions"):"none"}</span><button class="plus" data-${attr}="${id}|0.5" aria-label="More">+</button></div>`}
+function foodRows(attr,cat,vals,day){const order=["pro","bean","carb","fruit","veg","fat","fib","snk"];
+  return `<div class="cats">${order.map(k=>`<button class="cat ${cat===k?"on":""}" data-${attr==="bstep"?"bcat":"tcat"}="${k}"><span class="dot" style="background:${CATS[k].c}"></span>${CATS[k].n}</button>`).join("")}</div>
+  ${I.filter(x=>x.c===cat).map(it=>{const no=day==="fast"&&(!calc(it,"f","fast")||!calc(it,"h","fast"));return `<div class="item" style="grid-template-columns:1fr"><div><div class="iname">${esc(it.n)}</div><div class="inote">${portionTxt(it)}</div>${no?`<div class="skip">Not on fasting days</div>`:stepper(attr,it.id,vals[it.id]||0)}</div></div>`}).join("")}`}
+function myView(){const b=st.bd,m=compose({id:"draft",n:b.n||"New meal",slot:b.slot,items:Object.entries(b.items)});
+  const sel=Object.entries(b.items);
+  const tot=w=>{const r=calc(m,w,"normal");return r?`<div class="row"><span class="badge ${w}">${w.toUpperCase()}</span>${esc(r.txt)}<span class="mac">${macro(r)}</span></div>`:""};
+  let h=`<article class="card" style="--c:var(--terra)"><span class="tag">${b.edit?"Editing a saved meal":"Build your own meal"}</span><h2>Meal builder</h2>
+   <p class="lead">Pick foods from the lists below with + and -. 1 portion = the F or H weight from the Food lists. Saved meals show up in the 7-day plan, the shopping list and the food tracker.</p>
+   <label class="inote" for="bdName">Meal name</label><input class="inp" id="bdName" value="${esc(b.n)}" placeholder="e.g. Friday chicken salad" maxlength="60">
+   <div class="ticks">Meal: ${SLOTS.map(([k,n])=>`<button class="tick ${b.slot===k?"on":""}" data-bslot="${k}"><span class="box">${b.slot===k?"&#10003;":""}</span>${n}</button>`).join("")}</div>
+   ${sel.length?`<div class="slabel">In this meal</div>${sel.map(([id,v])=>`<div class="inote">${v} x ${esc(byId(id).n)}</div>`).join("")}${b.slot!=="s"?plateCheck(b.items):""}<div class="am" style="margin-top:8px">${st.who!=="h"?tot("f"):""}${st.who!=="f"?tot("h"):""}</div>`:`<div class="inote">No foods added yet.</div>`}
+   <div class="btns" style="margin-top:12px"><button class="btn main" data-bsave="">${b.edit?"Save changes":"Save meal"}</button>${sel.length||b.n?`<button class="btn" data-bclear="">${b.edit?"Cancel":"Start again"}</button>`:""}</div></article>
+  <article class="card" style="--c:${CATS[b.cat].c}"><h2>Add foods</h2><p class="ch">Normal day weights shown. On fasting days the plan uses the fasting weights automatically.</p>${foodRows("bstep",b.cat,b.items,"normal")}</article>
+  <article class="card" style="--c:var(--sage)"><h2>My saved meals</h2>${st.my.length?st.my.map(x=>{const c=compose(x),f=calc(c,"f","normal"),hh=calc(c,"h","normal");
+    return `<div class="mrow"><div><div class="iname">${esc(x.n)} <span class="chip" style="font-weight:400">${SLOTS.find(s=>s[0]===x.slot)[1]}</span></div><div class="inote">${esc(c.t.replace("My meal: ",""))}</div><div class="inote">F ${Math.round(f.kc)} kcal, ${Math.round(f.P)} g protein · H ${Math.round(hh.kc)} kcal, ${Math.round(hh.P)} g protein</div></div>
+    <div class="btns"><button class="btn" data-medit="${x.id}">Edit</button><button class="btn" data-mdel="${x.id}">Delete</button></div></div>`}).join(""):`<div class="inote">None yet. Build one above.</div>`}</article>`;
+  return h}
+/* ---------- Food tracker ---------- */
+function dayLog(){return st.log[st.td]=st.log[st.td]||{dt:"normal",f:{},h:{}}}
+function logItem(id){return id.startsWith("my_")?(st.my.find(x=>"my_"+x.id===id)&&compose(st.my.find(x=>"my_"+x.id===id))):byId(id)}
+function logTotal(w){const L=st.log[st.td];const t={kc:0,P:0,C:0,Fb:0};if(!L)return t;
+  for(const sl in L[w])for(const id in L[w][sl]){const it=logItem(id);if(!it)continue;const r=calc(scaleIt(it,L[w][sl][id]),w,L.dt);if(r){t.kc+=r.kc;t.P+=r.P;t.C+=r.C;t.Fb+=r.Fb}}return t}
+function bar1(lab,v,max,w){const pc=Math.min(100,Math.round(v/max*100));return `<div class="inote">${lab}: <b>${Math.round(v)}</b> of ${max}</div><div class="pbar" style="--c2:${w==="f"?"var(--terra)":"var(--teal)"}"><i style="width:${pc}%"></i></div>`}
+function trackView(){const L=dayLog(),fast=L.dt==="fast",tw=st.tw==="both"?"f":st.tw;
+  const cur=(L[tw][st.tslot]||{});
+  const totals=["f","h"].filter(w=>st.who==="both"||st.who===w).map(w=>{const t=logTotal(w),T=w==="f"?[1400,100]:[1950,110];
+    return `<div class="who ${w}"><h3>${w.toUpperCase()} today</h3>${bar1("kcal",t.kc,T[0],w)}${bar1("Protein g",t.P,T[1],w)}${bar1("Fibre g",t.Fb,30,w)}<div class="inote">Net carbs: <b>${Math.round(t.C-t.Fb)} g</b></div></div>`}).join("");
+  const logged=SLOTS.map(([k,n])=>{const ws=(st.tw==="both"?["f","h"]:[st.tw]);const lines=ws.map(w=>{const S=L[w][k]||{};const e=Object.entries(S);return e.length?`<div class="inote"><span class="badge ${w}">${w.toUpperCase()}</span>${e.map(([id,v])=>`${v} x ${esc((logItem(id)||{n:"(deleted meal)"}).n)}`).join(", ")}</div>`:""}).join("");return lines?`<div class="pm"><b>${n}</b>${lines}</div>`:""}).join("");
+  const mine=st.my.filter(x=>x.slot===st.tslot||(st.tslot==="s"&&x.slot==="s"));
+  return `<article class="card" style="--c:var(--teal)"><span class="tag">Tick what you eat</span><h2>Food tracker</h2>
+   <p class="lead">Tap + on a food or saved meal each time you eat a portion. Saved per date on this device.</p>
+   <label class="inote" for="tdDate">Date</label><input class="inp" type="date" id="tdDate" value="${st.td}">
+   <div class="ticks">Day: <button class="tick ${!fast?"on":""}" data-tdt="normal"><span class="box">${!fast?"&#10003;":""}</span>Normal</button><button class="tick ${fast?"on":""}" data-tdt="fast"><span class="box">${fast?"&#10003;":""}</span>Fasting</button></div>
+   <div class="ticks">Logging for: ${[["f","F"],["h","H"],["both","Both"]].map(([k,n])=>`<button class="tick ${k==="h"?"h":k==="f"?"f":""} ${st.tw===k?"on":""}" data-tw="${k}"><span class="box">${st.tw===k?"&#10003;":""}</span>${n}</button>`).join("")}</div>
+   <div class="two">${totals}</div>${logged?`<div class="slabel" style="margin-top:12px">Logged today</div>${logged}`:""}</article>
+  <article class="card" style="--c:var(--terra)"><h2>Add to ${SLOTS.find(s=>s[0]===st.tslot)[1].toLowerCase()}</h2>
+   <div class="ticks">${SLOTS.map(([k,n])=>`<button class="tick ${st.tslot===k?"on":""}" data-tslot="${k}"><span class="box">${st.tslot===k?"&#10003;":""}</span>${n}</button>`).join("")}</div>
+   ${st.tw==="both"?`<div class="inote">Both: each tap adds the portion for F and for H. The number shown is F's.</div>`:""}
+   ${mine.length?`<div class="slabel">My saved meals</div>${mine.map(x=>`<div class="item" style="grid-template-columns:1fr"><div><div class="iname">${esc(x.n)}</div>${stepper("tstep","my_"+x.id,cur["my_"+x.id]||0)}</div></div>`).join("")}`:""}
+   <div class="slabel" style="margin-top:8px">Foods</div>${foodRows("tstep",st.tcat,cur,L.dt)}</article>`}
+function toastMsg(t){let e=document.getElementById("toast");if(!e){e=document.createElement("div");e.id="toast";e.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;z-index:9";document.body.appendChild(e)}e.textContent=t;e.style.opacity=1;clearTimeout(e._t);e._t=setTimeout(()=>e.style.opacity=0,1800)}
+document.addEventListener("input",e=>{if(e.target.id==="bdName"){st.bd.n=e.target.value;LS.set("bd",st.bd)}});
+document.addEventListener("change",e=>{if(e.target.id==="tdDate"&&e.target.value){st.td=e.target.value;render()}});
+/* ---------- How to use ---------- */
+function helpView(){
+  const S=[
+   ["plate","Plate & targets","var(--sage)",["Start here. The plate picture shows half veg, a quarter protein, a quarter beans.","The chips show the grams for F and for H.","Tap <b>Normal</b> or <b>Fasting</b> at the top to see the fasting-day plate.","Your daily targets are at the bottom."]],
+   ["lists","Food lists","var(--teal)",["Every food with the F and H weight for 1 portion.","Tap a list: Proteins, Beans, Veg, Fats and so on.","Tap the &#9734; star to keep a favourite in <b>Our picks</b>."]],
+   ["plan","7-day plan","var(--terra)",["Tap <b>Day 1</b> to <b>Day 7</b> at the top.","Set each day to <b>Normal day</b> or <b>Fasting day</b>.","Tap 1 option for breakfast, lunch and dinner, and pick your snacks.","After eating, tick <b>F</b> or <b>H</b> next to <b>Eaten</b>.","The day total at the top tells you if fibre or energy is low."]],
+   ["my","My meals","var(--gold)",["Make your own mix-and-match meal.","Type a name, pick Breakfast, Lunch, Dinner or Snack.","Tap <b>+</b> on foods. Watch the plate check: &#10003; protein, &#10003; beans or carb, &#10003; veg, fats.","Tap <b>Save meal</b>. It now shows in the 7-day plan as \"My meal\"."]],
+   ["track","Food tracker","var(--vlc)",["For days you don't follow the plan, or to log everything you eat.","Check the date and pick Normal or Fasting.","Pick who you are logging for: <b>F</b>, <b>H</b> or <b>Both</b>.","Pick the meal, then tap <b>+</b> for each portion eaten.","The bars show kcal, protein and fibre against your targets."]],
+   ["print","Week & shop","var(--sage)",["Your whole week on one page, from your 7-day plan picks.","The shopping list adds up both of you for the week.","Tap an item to tick it off while you shop.","<b>Save as PDF</b> keeps a copy on your phone."]]];
+  return `<article class="card" style="--c:var(--terra)"><span class="tag">Quick sheet</span><h2>How to use Our Plate Plan</h2>
+   <p class="lead"><b>Show F / H / Both</b> at the top switches whose portions you see, on every tab.</p>
+   ${S.map((x,i)=>`<div class="step" style="--c:${x[2]}"><div class="num">${i+1}</div><div><h3>${x[1]}</h3><ul>${x[3].map(l=>`<li>${l}</li>`).join("")}</ul><button class="btn go" data-tab="${x[0]}">Open ${x[1]}</button></div></div>`).join("")}</article>
+  <article class="card" style="--c:var(--teal)"><span class="tag">Your week</span><h2>Weekly routine</h2>
+   <div class="step"><div class="num">1</div><div><h3>Plan</h3><ul><li>Pick your 7 days in the 7-day plan. Mark your fasting days.</li></ul></div></div>
+   <div class="step"><div class="num">2</div><div><h3>Shop</h3><ul><li>Open Week & shop and tick off the shopping list in the shop.</li></ul></div></div>
+   <div class="step"><div class="num">3</div><div><h3>Cook and eat</h3><ul><li>Weigh portions in grams. Eat veg first, then protein, beans last.</li><li>Tick <b>Eaten</b> in the 7-day plan, or log extras in the Food tracker.</li></ul></div></div>
+   <div class="step"><div class="num">4</div><div><h3>New week</h3><ul><li>Tap <b>Clear ticks</b> on each day and <b>Untick shopping list</b>.</li><li>Change your picks for some variety.</li></ul></div></div></article>
+  <article class="card" style="--c:var(--gold)"><span class="tag">Good to know</span><h2>Tips</h2><ul style="padding-left:18px;margin:0;font-size:14px">
+   <li>Weights are cooked or drained weights, in grams.</li>
+   <li>Fasting days: F skips breakfast, beans are halved, no rice, quinoa, sweet potato or oats.</li>
+   <li>H: use his CGM to see which bean or carb portions suit him.</li>
+   <li>Everything saves on this device and browser. Clearing your browser data deletes your picks, meals and log.</li>
+   <li>Your phone and laptop keep separate copies, so use one device for tracking.</li></ul></article>`}
+function bar(){
+  const T=[["plate","Plate & targets",0],["lists","Food lists",0],["plan","7-day plan",0],["my","My meals",0],["track","Food tracker",0],["print","Week & shop",0],["help","How to use",0]];
+  $("#tabs").innerHTML=T.map(([k,n,d])=>`<button class="tab ${st.tab===k?"on":""}" data-tab="${k}" ${d?"disabled":""}>${n}</button>`).join("");
+  $("#day").style.display=["plan","print","my","track","help"].includes(st.tab)?"none":"";
+  $("#day").innerHTML=`<span>Day</span>`+[["normal","Normal"],["fast","Fasting"]].map(([k,n])=>`<button class="${st.day===k?"on":""}" data-day="${k}">${n}</button>`).join("");
+  $("#who").innerHTML=`<span>Show</span>`+[["f","F"],["h","H"],["both","Both"]].map(([k,n])=>`<button class="${st.who===k?"on":""}" data-who="${k}">${n}</button>`).join("");
+}
+function render(){SNK=SNK0.concat(myMeals("s"));bar();$("#main").innerHTML=st.tab==="lists"?listsView():st.tab==="plan"?planView():st.tab==="print"?printView():st.tab==="my"?myView():st.tab==="track"?trackView():st.tab==="help"?helpView():plateView()}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data-day],[data-who],[data-cat],[data-fav],[data-pday],[data-dtype],[data-pick],[data-shop],[data-clearshop],[data-ate],[data-clearate],[data-bslot],[data-bcat],[data-bstep],[data-bsave],[data-bclear],[data-medit],[data-mdel],[data-tslot],[data-tcat],[data-tstep],[data-tw],[data-tdt],#print");if(!t)return;const d=t.dataset;
+  if(t.id==="print"){window.print();return}
+  if(d.tab){st.tab=d.tab;LS.set("tab",st.tab)}
+  else if(d.day){st.day=d.day;LS.set("day",st.day)}
+  else if(d.who){st.who=d.who;LS.set("who",st.who)}
+  else if(d.cat){st.cat=d.cat;LS.set("cat",st.cat)}
+  else if(d.pday){st.pday=+d.pday;LS.set("pday",st.pday)}
+  else if(d.dtype){st.dtype[st.pday]=d.dtype;LS.set("dtype",st.dtype)}
+  else if(d.pick){const [dd,m,id]=d.pick.split("|");(st.sel[dd]=st.sel[dd]||{})[m]=id;LS.set("sel",st.sel)}
+  else if(d.bslot){st.bd.slot=d.bslot;LS.set("bd",st.bd)}
+  else if(d.bcat){st.bd.cat=d.bcat;LS.set("bd",st.bd)}
+  else if(d.bstep){const [id,v]=d.bstep.split("|");const n=Math.max(0,Math.min(4,(st.bd.items[id]||0)+ +v));if(n)st.bd.items[id]=n;else delete st.bd.items[id];LS.set("bd",st.bd)}
+  else if(d.bclear!==undefined){st.bd={n:"",slot:"l",items:{},edit:null,cat:st.bd.cat};LS.set("bd",st.bd)}
+  else if(d.bsave!==undefined){const nm=(st.bd.n||"").trim();if(!nm){alert("Give your meal a name first.");return}if(!Object.keys(st.bd.items).length){alert("Add at least one food first.");return}
+    const m={id:st.bd.edit||String(Date.now()),n:nm,slot:st.bd.slot,items:Object.entries(st.bd.items)};const i=st.my.findIndex(x=>x.id===m.id);i<0?st.my.push(m):st.my[i]=m;LS.set("my",st.my);st.bd={n:"",slot:"l",items:{},edit:null,cat:st.bd.cat};LS.set("bd",st.bd);toastMsg("Meal saved")}
+  else if(d.medit){const m=st.my.find(x=>x.id===d.medit);if(m){st.bd={n:m.n,slot:m.slot,items:Object.fromEntries(m.items),edit:m.id,cat:st.bd.cat};LS.set("bd",st.bd);window.scrollTo(0,0)}}
+  else if(d.mdel){const m=st.my.find(x=>x.id===d.mdel);if(m&&confirm(`Delete "${m.n}"? This cannot be undone.`)){st.my=st.my.filter(x=>x.id!==d.mdel);LS.set("my",st.my)}}
+  else if(d.tslot){st.tslot=d.tslot}
+  else if(d.tcat){st.tcat=d.tcat}
+  else if(d.tw){st.tw=d.tw;LS.set("tw",st.tw)}
+  else if(d.tdt){dayLog().dt=d.tdt;LS.set("log",st.log)}
+  else if(d.tstep){const [id,v]=d.tstep.split("|");const L=dayLog();for(const w of st.tw==="both"?["f","h"]:[st.tw]){const S=(L[w][st.tslot]=L[w][st.tslot]||{});const n=Math.max(0,Math.min(6,(S[id]||0)+ +v));if(n)S[id]=n;else delete S[id]}LS.set("log",st.log)}
+  else if(d.ate){st.ate[d.ate]?delete st.ate[d.ate]:st.ate[d.ate]=1;LS.set("ate",st.ate)}
+  else if(d.clearate!==undefined){for(const k in st.ate)if(k.startsWith(d.clearate+"|"))delete st.ate[k];LS.set("ate",st.ate)}
+  else if(d.shop){const i=st.got.indexOf(d.shop);i<0?st.got.push(d.shop):st.got.splice(i,1);LS.set("got",st.got)}
+  else if(d.clearshop!==undefined){st.got=[];LS.set("got",st.got)}
+  else if(d.fav){const i=st.fav.indexOf(d.fav);i<0?st.fav.push(d.fav):st.fav.splice(i,1);LS.set("fav",st.fav)}
+  render()});
+function theme(t){document.documentElement.dataset.theme=t;$("#theme").textContent=t==="dark"?"Light mode":"Dark mode";LS.set("theme",t)}
+$("#theme").onclick=()=>theme(document.documentElement.dataset.theme==="dark"?"light":"dark");
+theme(LS.get("theme","light"));render();
+</script>
+</body>
+</html>
